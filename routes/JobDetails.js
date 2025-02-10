@@ -1,8 +1,8 @@
 const express= require('express');
 const router = express.Router();
-const mysql = require('../db/conn');
-const dbConn = mysql();
-const promiseConn = dbConn.promise();
+const pool = require('../db/conn')
+// const dbConn = mysql();
+// const promiseConn = dbConn.promise();
 const shortId = require('short-unique-id');
 const uuid = new shortId({length:10});
 require('dotenv').config();
@@ -14,7 +14,7 @@ router.post('/update/add/new/job',authenticateToken, async(req,res)=>{
         const jobId = uuid.rnd();
         const {org_name, job_title, job_description,job_requirements, compensation, last_entry, vacant_positions} = req.body;
         const addJobQuery = "INSERT INTO jobs(id, org_name, job_title, job_description,job_requirements, compensation, last_entry, vacant_positions) VALUES (?,?,?,?,?,?,?,?)";
-        const [results] = await promiseConn.query(addJobQuery, [jobId, org_name, job_title, job_description,job_requirements, compensation, last_entry, vacant_positions]);
+        const [results] = await pool.query(addJobQuery, [jobId, org_name, job_title, job_description,job_requirements, compensation, last_entry, vacant_positions]);
         if(results.affectedRows === 1){
             return res.status(201).json({message:"Job added to the portal"});
         } 
@@ -35,7 +35,7 @@ router.get('/alljobs', authenticateToken, async(req,res)=>{
     let offset = (page - 1) * 5;
     const getAll = "SELECT * FROM jobs LIMIT 5 OFFSET ?";
     const totalCount = "SELECT COUNT(*) AS total FROM jobs";
-    const [countResult] = await promiseConn.query(totalCount);
+    const [countResult] = await pool.query(totalCount);
     let total = countResult[0].total;
     let totalPages = Math.ceil(total/5);
 

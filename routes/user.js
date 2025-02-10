@@ -4,9 +4,10 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const shortUniquId = require('short-unique-id')
 const uuid = new shortUniquId({lenght: 10})
-const mysql = require('../db/conn');
-const dbConn = mysql();
-const promiseConn = dbConn.promise();
+const pool = require('../db/conn')
+// const mysql = require('../db/conn');
+// const dbConn = mysql();
+// const promiseConn = dbConn.promise();
 const bcrypt = require('bcryptjs');
 
 
@@ -21,7 +22,7 @@ router.post('/register', async(req,res)=>{
         }
         const hashpass = bcrypt.hashSync(password, 12);
         const addUser = "INSERT INTO users(id, email, password) VALUES (?,?,?)"; 
-        const [result] = await promiseConn.query(addUser, [id, email, hashpass]);
+        const [result] = await pool.query(addUser, [id, email, hashpass]);
         if(result.affectedRows === 1){
             const token =jwt.sign({useremail:email}, process.env.USER_TOKEN_GENERATION, {expiresIn:'1h'});
             return res.status(201).json({message:"User added to DB", token})
@@ -39,7 +40,7 @@ router.post('/generateToken', async(req,res)=>{
             return res.status(402).json({message:"Details not provided"});
         }
         const searchUSer = "SELECT * FROM users WHERE email = ?";
-        const [result] = await promiseConn.query(searchUSer,[email]);
+        const [result] = await pool.query(searchUSer,[email]);
         if(result.length <= 0){
             return res.status(400).json({message:"User not found in database"})
         }
