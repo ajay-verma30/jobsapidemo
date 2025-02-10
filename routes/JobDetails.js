@@ -31,15 +31,15 @@ router.post('/update/add/new/job',authenticateToken, async(req,res)=>{
 
 router.get('/alljobs', authenticateToken, async(req,res)=>{
     try{
+        // res.status(200).send("Worjing")
         let page = parseInt(req.query.page) || 1;
-    let offset = (page - 1) * 5;
-    const getAll = "SELECT * FROM jobs LIMIT 5 OFFSET ?";
-    const totalCount = "SELECT COUNT(*) AS total FROM jobs";
-    const [countResult] = await pool.query(totalCount);
-    let total = countResult[0].total;
-    let totalPages = Math.ceil(total/5);
-
-    const [results] = await promiseConn.query(getAll,[offset]);
+        let offset = (page - 1) * 5;
+        const getAll = "SELECT * FROM jobs LIMIT 5 OFFSET ?";
+        const totalCount = "SELECT COUNT(*) AS total FROM jobs";
+        const [countResult] = await pool.query(totalCount);
+        let total = countResult[0].total;
+        let totalPages = Math.ceil(total/5);
+        const [results] = await pool.query(getAll,[offset]);
     if(results.length === 0){
         return res.status(400).json({message:"No data found"});
     }
@@ -49,9 +49,9 @@ router.get('/alljobs', authenticateToken, async(req,res)=>{
         page,
         data:results
     });
-    }
+     }
     catch(e){
-        return res.status(500).json({message:"Internal Server Error."});
+    return res.status(500).json({message:"Internal Server Error."});
     }
 })
 

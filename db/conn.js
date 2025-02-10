@@ -1,7 +1,8 @@
-const mysql = require("mysql2");
+const mysql = require("serverless-mysql");
+// const mysql = require("mysql2");
 require("dotenv").config();
 
-const pool = mysql.createPool({
+const pool = mysql({
   host: "3.111.31.7",
   user: "ajay1verma",
   password: process.env.DB_PASSWORD,
@@ -12,6 +13,6 @@ const pool = mysql.createPool({
 });
 
 // Use promise-based pool for async/await support
-const promisePool = pool.promise();
+// const promisePool = pool.promise();
 
-module.exports = promisePool;
+module.exports = pool;

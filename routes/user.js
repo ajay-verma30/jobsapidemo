@@ -16,7 +16,7 @@ router.post('/register', async(req,res)=>{
         const id = uuid.rnd();
         const {email, password} = req.body;
         const existingUser = "SELECT * FROM users WHERE email = ?";
-        const[results] = await promiseConn.query(existingUser, [email]);
+        const[results] = await pool.query(existingUser, [email]);
         if(results.length > 0){
             return res.status(400).json({message:"User exists in the DB. Try login api instead /login"});
         }
