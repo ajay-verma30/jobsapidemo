@@ -68,4 +68,18 @@ router.post('/generateToken', async(req,res)=>{
     }
 })
 
+router.get('/alluser', async(req,res)=>{
+    try{
+        const searchUSers = "SELECT * FROM users";
+        const [result] = await pool.query(searchUSers);
+        if(result.lenght >= 0){
+            return res.status(400).send("no user found")
+        }
+        return res.status(200).json({result});
+    }
+    catch(e){
+        return res.status(200).send(e)
+    }
+})
+
 module.exports = router;
