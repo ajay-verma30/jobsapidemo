@@ -44,8 +44,8 @@ router.post('/generateToken', async(req,res)=>{
             return res.status(400).json({message:"User not found in database"})
         }
         const userDetails = result[0];
-     const userPassword = userDetails.password;
-     if(userPassword === password){
+     const passMatch = bcrypt.compare(userDetails.password, password);
+     if(passMatch){
         const token = jwt.sign({useremail:email}, process.env.USER_TOKEN_GENERATION, {expiresIn:"1h"});
         return res.status(201).json({token})
      }
